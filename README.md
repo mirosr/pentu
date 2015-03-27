@@ -1,5 +1,7 @@
 # Pentu
 
+[![Build Status](https://travis-ci.org/mirosr/pentu.svg)](https://travis-ci.org/mirosr/pentu)
+
 ```
   ／l、
 （ﾟ､ ｡ ７
