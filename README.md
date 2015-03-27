@@ -1,6 +1,7 @@
 # Pentu
 
 [![Build Status](https://travis-ci.org/mirosr/pentu.svg)](https://travis-ci.org/mirosr/pentu)
+[![Code Climate](https://codeclimate.com/github/mirosr/pentu/badges/gpa.svg)](https://codeclimate.com/github/mirosr/pentu)
 
 ```
   ／l、
