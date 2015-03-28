@@ -3,6 +3,6 @@ rvm:
   - 2.2.1
   - 2.1.5
   - 2.0.0-p643
-script: 'ruby spec/spec_helper.rb'
+script: './bin/run_specs.rb'
 notifications:
   email: false

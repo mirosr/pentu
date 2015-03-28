@@ -29,7 +29,7 @@ $ ./bin/pentu.rb
 
 Run the test suite from the command line:
 ```
-$ ruby spec/spec_helper.rb
+$ ./bin/run_specs.rb
 ```
 
 ## What does the name mean?

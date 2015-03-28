@@ -1,4 +1,6 @@
-require_relative 'spec_helper'
+require 'spec_helper'
+require 'forensics_adapter'
+require 'drone'
 
 describe Application do
   let(:described_entity) { Application }
