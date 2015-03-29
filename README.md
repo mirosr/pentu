@@ -16,7 +16,7 @@ This program saves kittens. For real!
 
 ## Requirements
 
-TODO
+ruby >= 2.1.5
 
 ## How to run the program?
 
