@@ -1,11 +1,11 @@
 require 'responses/base'
 
 module Responses
-  class Directions < Base
+  class Result < Base
     def initialize(response_hash)
       super
 
-      @value = response_hash['directions']
+      @value = response_hash['message']
     end
   end
 end

@@ -26,10 +26,34 @@ describe ForensicsAdapter do
       end
     end
 
-    context 'when the respone cannot be parsed' do
-      it 'retuns a response the error message' do
+    context 'when the response cannot be parsed' do
+      it 'retuns a response with the error message' do
         Net::HTTP.stub(:get_response, invalid_mock) do
           response = described_entity.directions
+
+          response.must_be_kind_of Responses::Error
+          response.value.must_be :empty?
+          response.error.must_match /unexpected token at 'invalid_json'/
+        end
+      end
+    end
+  end
+
+  describe '.submit_location' do
+    it 'returns a response with the received result' do
+      Net::HTTP.stub(:get_response, result_mock) do
+        response = described_entity.submit_location(x: 0, y: 0)
+
+        response.must_be_kind_of Responses::Result
+        response.value.wont_be :empty?
+        response.error.must_be :empty?
+      end
+    end
+
+    context 'when the response cannot be parsed' do
+      it 'retuns a response with the error message' do
+        Net::HTTP.stub(:get_response, invalid_mock) do
+          response = described_entity.submit_location(x: 0, y: 0)
 
           response.must_be_kind_of Responses::Error
           response.value.must_be :empty?
@@ -64,6 +88,15 @@ describe ForensicsAdapter do
 
     response.expect(:is_a?, true, [Net::HTTPOK])
     response.expect(:body, 'invalid_json')
+
+    response
+  end
+
+  def result_mock
+    response = MiniTest::Mock.new
+
+    response.expect(:is_a?, true, [Net::HTTPOK])
+    response.expect(:body, '{"message":"Congratulations!"}')
 
     response
   end
