@@ -21,7 +21,7 @@ class Application
 
     if response.error?
       say 'No drones were sent since the forensics web service returned an error:', false
-      puts "\n#{response.error}\n"
+      puts "\n#{response.error}\n\n"
       say 'No kittens were saved!!! :(', false
     else
       say 'Sending a drone to follow the forensics directions' do

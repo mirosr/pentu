@@ -7,9 +7,9 @@ describe ForensicsAdapter do
     it 'returns a response with the received directions' do
       stub_directions_request do
         response = described_entity.directions
-        
+
         response.must_be_kind_of Responses::Directions
-        response.value.wont_be :empty?
+        response.value.must_equal ['forward']
         response.error.must_be :empty?
       end
     end
@@ -21,7 +21,7 @@ describe ForensicsAdapter do
 
           response.must_be_kind_of Responses::Error
           response.value.must_be :empty?
-          response.error.wont_be :empty?
+          response.error.must_equal 'Invalid email address'
         end
       end
     end
@@ -33,7 +33,19 @@ describe ForensicsAdapter do
 
           response.must_be_kind_of Responses::Error
           response.value.must_be :empty?
-          response.error.must_match /unexpected token at 'invalid_json'/
+          response.error.must_match /unexpected token at 'invalid json'/
+        end
+      end
+    end
+
+    context 'when the remote service returns general error' do
+      it 'retuns a response with the error message' do
+        stub_not_found_response do
+          response = described_entity.directions
+
+          response.must_be_kind_of Responses::Error
+          response.value.must_be :empty?
+          response.error.must_match /unexpected token at 'not found'/
         end
       end
     end
@@ -57,7 +69,7 @@ describe ForensicsAdapter do
 
           response.must_be_kind_of Responses::Error
           response.value.must_be :empty?
-          response.error.must_match /unexpected token at 'invalid_json'/
+          response.error.must_match /unexpected token at 'invalid json'/
         end
       end
     end
@@ -80,7 +92,6 @@ describe ForensicsAdapter do
     response.expect(:is_a?, true, [Net::HTTPOK])
     response.expect(:body, '{"message":"Congratulations!"}')
 
-
     stub_http_request(response, &block)
   end
 
@@ -97,7 +108,16 @@ describe ForensicsAdapter do
     response = MiniTest::Mock.new
 
     response.expect(:is_a?, true, [Net::HTTPOK])
-    response.expect(:body, 'invalid_json')
+    response.expect(:body, 'invalid json')
+
+    stub_http_request(response, &block)
+  end
+
+  def stub_not_found_response(&block)
+    response = MiniTest::Mock.new
+
+    response.expect(:is_a?, false, [Net::HTTPOK])
+    response.expect(:body, 'not found')
 
     stub_http_request(response, &block)
   end
