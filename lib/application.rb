@@ -23,27 +23,29 @@ class Application
       say 'No drones were sent since the forensics web service returned an error:', false
       puts "\n#{response.error}\n\n"
       say 'No kittens were saved!!! :(', false
-    else
+      return false
+    end
+
+    say 'Sending a drone to follow the forensics directions' do
       begin
-        say 'Sending a drone to follow the forensics directions' do
-          drone.fly(response.value)
-        end
-        say %[Drone's last location (x,y): #{drone.location}], false
-
-        say %q(Sending drone's last location to the forensics web service) do
-          response = ForensicsAdapter.submit_location(
-            x: drone.location.x, y: drone.location.y)
-        end
-
-        say response.value, false
+        drone.fly(response.value)
       rescue ArgumentError => e
         puts ''
         say 'The drone reported an error:', false
         puts "\n#{e.message}\n\n"
         say "The drone is stucked at location (x,y): #{drone.location}", false
         say 'No kittens were saved!!! :(', false
+        return false
       end
     end
+    say %[Drone's last location (x,y): #{drone.location}], false
+
+    say %q(Sending drone's last location to the forensics web service) do
+      response = ForensicsAdapter.submit_location(
+        x: drone.location.x, y: drone.location.y)
+    end
+
+    say response.value, false
   end
 
   private
