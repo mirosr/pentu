@@ -3,6 +3,10 @@ require 'spec_helper'
 describe Application do
   let(:described_entity) { Application }
 
+  before do
+    Singleton.__init__(Application)
+  end
+
   it 'saves the kittens' do
     output, = capture_io do
       stub_directions_request do
@@ -25,7 +29,21 @@ describe Application do
         end
       end
 
-      output.must_equal failed_rescue_output
+      output.must_equal failed_service_output
+    end
+  end
+
+  context 'when the drone returns an error' do
+    it 'does not saves the kittens' do
+      output, = capture_io do
+        stub_invalid_directions_request do
+          stub_result_request do
+            described_entity.run
+          end
+        end
+      end
+
+      output.must_equal failed_drone_output
     end
   end
 
@@ -47,6 +65,12 @@ describe Application do
     stub_adapter(:get_directions, 'invalid json', &block)
   end
 
+  def stub_invalid_directions_request(&block)
+    body = '{"directions":["forward","right","land"]}'
+
+    stub_adapter(:get_directions, body, &block)
+  end
+
   def stub_adapter(method, body, is_http_ok = true, &block)
     response = MiniTest::Mock.new
     response.expect(:is_a?, is_http_ok, [Net::HTTPOK])
@@ -65,13 +89,26 @@ describe Application do
 EOS
   end
 
-  def failed_rescue_output
+  def failed_service_output
     <<EOS
 =^.^= Quering forensics web service for directions... done!
 =^.^= No drones were sent since the forensics web service returned an error:
 
 757: unexpected token at 'invalid json'
 
+=^.^= No kittens were saved!!! :(
+EOS
+  end
+
+  def failed_drone_output
+    <<EOS
+=^.^= Quering forensics web service for directions... done!
+=^.^= Sending a drone to follow the forensics directions...
+=^.^= The drone reported an error:
+
+Invalid direction 'land'
+
+=^.^= The drone is stucked at location (x,y): 0,1
 =^.^= No kittens were saved!!! :(
 EOS
   end

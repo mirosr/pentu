@@ -1,4 +1,8 @@
-Location = Struct.new(:x, :y)
+Location = Struct.new(:x, :y) do
+  def to_s
+    "#{x},#{y}"
+  end
+end
 
 class Drone
   attr_reader :location
@@ -21,12 +25,6 @@ class Drone
   end
 
   private
-
-  def validate_direction!(direction)
-    unless ['forward', 'right', 'left'].include?(direction)
-      raise ArgumentError, "Invalid direction '#{direction}'"
-    end
-  end
 
   def check_compass(direction)
     mapping = {
@@ -56,6 +54,12 @@ class Drone
       @location.x -= 1
     when :south
       @location.y -= 1
+    end
+  end
+
+  def validate_direction!(direction)
+    unless ['forward', 'right', 'left'].include?(direction)
+      raise ArgumentError, "Invalid direction '#{direction}'"
     end
   end
 end
