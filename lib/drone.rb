@@ -26,22 +26,22 @@ class Drone
 
   private
 
-  def check_compass(direction)
-    mapping = {
-      north: {
-        left: :west,
-        right: :east},
-      east: {
-        left: :north,
-        right: :south},
-      west: {
-        left: :south,
-        right: :north},
-      south: {
-        left: :east,
-        right: :west}}
+  MAPPING = {
+    north: {
+      left: :west,
+      right: :east},
+    east: {
+      left: :north,
+      right: :south},
+    west: {
+      left: :south,
+      right: :north},
+    south: {
+      left: :east,
+      right: :west}}
 
-    @heading = mapping[@heading][direction.to_sym]
+  def check_compass(direction)
+    @heading = MAPPING[@heading][direction.to_sym]
   end
 
   def move_forward
