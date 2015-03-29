@@ -1,12 +1,13 @@
 require 'uri'
 require 'net/http'
+
 require 'responses/directions'
 require 'responses/error'
 require 'responses/result'
 
 module ForensicsAdapter
   def self.directions
-    response = Net::HTTP.get_response(directions_url)
+    response = get_directions
 
     if response_successful?(response)
       Responses::Directions.load(response.body)
@@ -18,7 +19,7 @@ module ForensicsAdapter
   end
 
   def self.submit_location(x:, y:)
-    response = Net::HTTP.get_response(directions_url)
+    response = get_result
 
     Responses::Result.load(response.body)
   rescue => e
@@ -26,6 +27,14 @@ module ForensicsAdapter
   end
 
   private
+
+  def self.get_directions
+    Net::HTTP.get_response(directions_url)
+  end
+
+  def self.get_result
+    Net::HTTP.get_response(directions_url)
+  end
 
   def self.directions_url
     URI.parse(URL).tap do |uri|
@@ -43,6 +52,7 @@ module ForensicsAdapter
     response.is_a?(Net::HTTPOK)
   end
 
-  EMAIL = 'miro@mirosr.net'
+  EMAIL = 'miro-test@example.com'
+  # EMAIL = 'miro@mirosr.net'
   URL = "http://which-technical-exercise.herokuapp.com/api/#{EMAIL}"
 end

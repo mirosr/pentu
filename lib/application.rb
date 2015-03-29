@@ -1,5 +1,11 @@
 require 'singleton'
 
+require 'forensics_adapter'
+require 'drone'
+require 'responses/directions'
+require 'responses/error'
+require 'responses/result'
+
 class Application
   include Singleton
 
@@ -8,23 +14,28 @@ class Application
   end
 
   def run
-    directions = []
+    response = nil
     say 'Quering forensics web service for directions' do
-      directions = ForensicsAdapter.directions
+      response = ForensicsAdapter.directions
     end
 
-    say 'Sending a drone to follow the forensics directions' do
-      drone.fly(directions)
-    end
-    say(%{Drone's last location (x,y): #{drone.x},#{drone.y}}, false)
+    if response.error?
+      say 'No drones were sent since the forensics web service returned an error:', false
+      puts "\n#{response.error}\n"
+      say 'No kittens were saved!!! :(', false
+    else
+      say 'Sending a drone to follow the forensics directions' do
+        drone.fly(response.value)
+      end
+      say %{Drone's last location (x,y): #{drone.x},#{drone.y}}, false
 
-    search_party_message = ''
-    say %q(Sending drone's last location to the forensics web service) do
-      search_party_message = ForensicsAdapter.submit_location(
-        x: drone.x, y: drone.y)
-    end
+      say %q(Sending drone's last location to the forensics web service) do
+        response = ForensicsAdapter.submit_location(
+          x: drone.x, y: drone.y)
+      end
 
-    say(search_party_message, false)
+      say response.value, false
+    end
   end
 
   private

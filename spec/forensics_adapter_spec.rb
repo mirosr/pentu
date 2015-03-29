@@ -5,7 +5,7 @@ describe ForensicsAdapter do
 
   describe '.directions' do
     it 'returns a response with the received directions' do
-      Net::HTTP.stub(:get_response, json_mock) do
+      stub_directions_request do
         response = described_entity.directions
         
         response.must_be_kind_of Responses::Directions
@@ -16,7 +16,7 @@ describe ForensicsAdapter do
 
     context 'when the remote service returns a response with error' do
       it 'retuns a response the error message' do
-        Net::HTTP.stub(:get_response, error_mock) do
+        stub_error_request do
           response = described_entity.directions
 
           response.must_be_kind_of Responses::Error
@@ -28,7 +28,7 @@ describe ForensicsAdapter do
 
     context 'when the response cannot be parsed' do
       it 'retuns a response with the error message' do
-        Net::HTTP.stub(:get_response, invalid_mock) do
+        stub_invalid_response do
           response = described_entity.directions
 
           response.must_be_kind_of Responses::Error
@@ -41,7 +41,7 @@ describe ForensicsAdapter do
 
   describe '.submit_location' do
     it 'returns a response with the received result' do
-      Net::HTTP.stub(:get_response, result_mock) do
+      stub_result_request do
         response = described_entity.submit_location(x: 0, y: 0)
 
         response.must_be_kind_of Responses::Result
@@ -52,7 +52,7 @@ describe ForensicsAdapter do
 
     context 'when the response cannot be parsed' do
       it 'retuns a response with the error message' do
-        Net::HTTP.stub(:get_response, invalid_mock) do
+        stub_invalid_response do
           response = described_entity.submit_location(x: 0, y: 0)
 
           response.must_be_kind_of Responses::Error
@@ -65,39 +65,44 @@ describe ForensicsAdapter do
 
   private
 
-  def json_mock
+  def stub_directions_request(&block)
     response = MiniTest::Mock.new
 
     response.expect(:is_a?, true, [Net::HTTPOK])
     response.expect(:body, '{"directions":["forward"]}')
 
-    response
+    stub_http_request(response, &block)
   end
 
-  def error_mock
-    response = MiniTest::Mock.new
-
-    response.expect(:is_a?, false, [Net::HTTPOK])
-    response.expect(:body, %({"error":"Invalid email address"}))
-
-    response
-  end
-
-  def invalid_mock
-    response = MiniTest::Mock.new
-
-    response.expect(:is_a?, true, [Net::HTTPOK])
-    response.expect(:body, 'invalid_json')
-
-    response
-  end
-
-  def result_mock
+  def stub_result_request(&block)
     response = MiniTest::Mock.new
 
     response.expect(:is_a?, true, [Net::HTTPOK])
     response.expect(:body, '{"message":"Congratulations!"}')
 
-    response
+
+    stub_http_request(response, &block)
+  end
+
+  def stub_error_request(&block)
+    response = MiniTest::Mock.new
+
+    response.expect(:is_a?, false, [Net::HTTPOK])
+    response.expect(:body, %({"error":"Invalid email address"}))
+
+    stub_http_request(response, &block)
+  end
+
+  def stub_invalid_response(&block)
+    response = MiniTest::Mock.new
+
+    response.expect(:is_a?, true, [Net::HTTPOK])
+    response.expect(:body, 'invalid_json')
+
+    stub_http_request(response, &block)
+  end
+
+  def stub_http_request(response, &block)
+    Net::HTTP.stub(:get_response, response, &block)
   end
 end

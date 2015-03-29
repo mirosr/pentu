@@ -12,5 +12,9 @@ module Responses
       @value = response_hash
       @error = ''
     end
+
+    def error?
+      self.class.name.end_with?('Error')
+    end
   end
 end

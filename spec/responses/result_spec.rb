@@ -13,6 +13,7 @@ describe Responses::Result do
     response = described_entity.load(json_response)
 
     response.error.must_equal ''
+    response.error?.must_equal false
   end
 
   private

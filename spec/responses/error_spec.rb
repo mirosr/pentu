@@ -13,6 +13,7 @@ describe Responses::Error do
     response = described_entity.load(json_response)
 
     response.value.must_be :empty?
+    response.error?.must_equal true
   end
 
   describe '.general' do
