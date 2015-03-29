@@ -27,11 +27,11 @@ class Application
       say 'Sending a drone to follow the forensics directions' do
         drone.fly(response.value)
       end
-      say %{Drone's last location (x,y): #{drone.x},#{drone.y}}, false
+      say %{Drone's last location (x,y): #{drone.location.x},#{drone.location.y}}, false
 
       say %q(Sending drone's last location to the forensics web service) do
         response = ForensicsAdapter.submit_location(
-          x: drone.x, y: drone.y)
+          x: drone.location.x, y: drone.location.y)
       end
 
       say response.value, false
