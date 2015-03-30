@@ -19,7 +19,7 @@ module ForensicsAdapter
   end
 
   def self.submit_location(x:, y:)
-    response = get_result
+    response = get_result(x, y)
 
     Responses::Result.load(response.body)
   rescue => e
@@ -32,8 +32,8 @@ module ForensicsAdapter
     Net::HTTP.get_response(directions_url)
   end
 
-  def self.get_result
-    Net::HTTP.get_response(directions_url)
+  def self.get_result(x, y)
+    Net::HTTP.get_response(location_url(x, y))
   end
 
   def self.directions_url
