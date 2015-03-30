@@ -52,7 +52,6 @@ module ForensicsAdapter
     response.is_a?(Net::HTTPOK)
   end
 
-  EMAIL = 'miro-test@example.com'
-  # EMAIL = 'miro@mirosr.net'
+  EMAIL = 'miro@mirosr.net'
   URL = "http://which-technical-exercise.herokuapp.com/api/#{EMAIL}"
 end
